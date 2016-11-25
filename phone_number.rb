@@ -1,16 +1,16 @@
 class PhoneNumber
   attr_reader :phone_number
 
-  INVALID = '0000000000'
+  INVALID_NUMBER = '0000000000'
 
   def initialize(phone_number)
     @phone_number = phone_number
   end
 
   def number
-    return INVALID if contains_letters?
-    remove_one
-    return INVALID if clean_number.length != 10
+    return INVALID_NUMBER if contains_letters?
+    handle_prefix
+    return INVALID_NUMBER if clean_number.length != 10
     clean_number
   end
 
@@ -19,25 +19,35 @@ class PhoneNumber
   end
 
   def clean_number
-    phone_number.chars.select do |character|
-       /\A\d+\z/.match(character)
-    end.join
+    phone_number.chars.select { |character| /\A\d+\z/.match(character) }.join
   end
 
-  def remove_one
-    if phone_number[0].to_i == 1 && phone_number.length > 10
-      phone_number.sub!(phone_number[0], '')
-    end
+  def handle_prefix
+    remove_prefix if phone_number[0].to_i == 1 && valid_length?
+  end
+
+  def to_s
+    handle_prefix if valid_length?
+    "(#{area_code}) #{exchange}-#{station_number}"
   end
 
   def area_code
     phone_number[0..2]
   end
 
-  def to_s
-    if phone_number.length > 10
-      phone_number.sub!(phone_number[0], '')
-    end
-    "(#{phone_number[0..2]}) #{phone_number[3..5]}-#{phone_number[6..10]}"
+  def exchange
+    phone_number[3..5]
+  end
+
+  def station_number
+    phone_number[6..10]
+  end
+
+  def valid_length?
+    phone_number.length > 10
+  end
+
+  def remove_prefix
+    phone_number.sub!(phone_number[0], '')
   end
 end
