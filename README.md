@@ -1,3 +1,5 @@
+NOTE: _This is a simple exercise I used to practice Ruby fundamentals._
+
 # Phone Number
 
 Write a program that cleans up user-entered phone numbers so that they can be sent SMS messages.
